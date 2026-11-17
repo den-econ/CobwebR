@@ -3,7 +3,7 @@
 #' @return ggplot2 object.
 #' @export
 plot_hsc_frontier <- function(frontier_df) {
-  ggplot2::ggplot(frontier_df, ggplot2::aes(x = reorder(ticker, stake_top_10), y = stake_top_10, fill = frontier_status)) +
+  ggplot2::ggplot(frontier_df, ggplot2::aes(x = stats::reorder(ticker, stake_top_10), y = stake_top_10, fill = frontier_status)) +
     ggplot2::geom_col() +
     ggplot2::coord_flip() +
     ggplot2::labs(

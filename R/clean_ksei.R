@@ -1,11 +1,15 @@
 #' Load and Clean KSEI Ownership Register
-#' @param file_path Path to the KSEI Excel file.
+#' @param file_path Path to the KSEI file: the raw IDX Excel download, or a CSV with the same columns (e.g. the bundled `ksei_ownership_2026-10-30.csv`).
 #' @return A cleaned tibble of shareholdings.
 #' @export
 load_ksei_register <- function(file_path) {
-  raw_data <- readxl::read_excel(file_path, skip = 3)
+  raw_data <- if (grepl("\\.csv$", file_path, ignore.case = TRUE)) {
+    utils::read.csv(file_path, stringsAsFactors = FALSE, check.names = FALSE)
+  } else {
+    readxl::read_excel(file_path, skip = 3)
+  }
   
-  cleaned <- raw_data %>%
+  cleaned <- raw_data |>
     dplyr::rename(
       date = 1,
       ticker = 2,
@@ -20,7 +24,7 @@ load_ksei_register <- function(file_path) {
       holdings_scrip = 11,
       total_holding_shares = 12,
       percentage = 13
-    ) %>%
+    ) |>
     dplyr::mutate(
       percentage = as.numeric(percentage),
       total_holding_shares = as.numeric(total_holding_shares)

@@ -12,7 +12,7 @@ run_green_list_screener <- function(ksei_df, market_data) {
   # Criterion L: ADTV complementary check
   
   # Placeholder integration logic
-  greentable <- market_data %>%
+  greentable <- market_data |>
     dplyr::filter(
       criterion_integrity == TRUE,
       criterion_free_float >= 0.15,
@@ -20,7 +20,7 @@ run_green_list_screener <- function(ksei_df, market_data) {
       criterion_broker_top < 0.30,
       criterion_institutional == TRUE,
       criterion_size_ffmc >= 1.0 # IDR 1tn
-    ) %>%
+    ) |>
     dplyr::arrange(dplyr::desc(free_float_mcap))
   
   return(greentable)

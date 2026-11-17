@@ -1,0 +1,7 @@
+^doc$
+^Meta$
+^\.Rproj\.user$
+^.*\.Rproj$
+^fig$
+^affiliation_family\.(pdf|png)$
+^data-raw$

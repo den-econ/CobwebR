@@ -59,11 +59,11 @@ We load the raw monthly KSEI $>1\%$ ownership dataset (e.g., October 2026 regist
 
 ```{r load-data}
 # Path to bundled sample dataset
-sample_file <- system.file("extdata", "peng-2026-10-00029-satu-persen.xlsx", package = "CobwebR")
+sample_file <- system.file("extdata", "ksei_ownership_2026-10-30.csv", package = "CobwebR")
 
 # If running outside package build directory, load directly:
 if (sample_file == "") {
-  sample_file <- "../inst/extdata/peng-2026-10-00029-satu-persen.xlsx"
+  sample_file <- "../inst/extdata/ksei_ownership_2026-10-30.csv"
 }
 
 ksei_clean <- load_ksei_register(sample_file)
