@@ -1,0 +1,29 @@
+Package: CobwebR
+Type: Package
+Title: Ownership-Network Framework for Shareholding Concentration and Verifiable Free Float
+Version: 0.1.0
+Authors@R: c(
+    person("Alfan", "Mansur", email = "correspondence@email.domain", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-8695-0514")),
+    person("Axel", "Azriel", role = "aut"),
+    person("Muhamad", "Haikal", role = "aut")
+  )
+Description: Implements the SpiderWeb ownership-network framework, HSC frontier calculation, group-linked holder consolidation, and the 6-criterion Green List screener for IDX-listed stocks using KSEI >1% ownership data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    dplyr,
+    tidyr,
+    igraph,
+    readxl,
+    openxlsx,
+    ggplot2,
+    purrr,
+    stringr
+Suggests:
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.3.3
+

@@ -1,0 +1,168 @@
+---
+title: "Replication Guide: CobwebR Package for Ownership Concentration and Verifiable Free Float"
+author:
+  - name: "Alfan Mansur"
+    orcid: "0000-0001-8695-0514"
+    affiliations:
+      - ref: den
+    email: "correspondence@email.domain"
+    corresponding: true
+  - name: "Axel Azriel"
+    affiliations:
+      - ref: den
+  - name: "Muhamad Haikal"
+    affiliations:
+      - ref: den
+affiliations:
+  - id: den
+    name: "Dewan Ekonomi Nasional"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Replication Guide: CobwebR Package for Ownership Concentration and Verifiable Free Float}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+library(CobwebR)
+library(dplyr)
+library(ggplot2)
+
+```
+
+# Introduction
+
+This vignette provides a step-by-step replication guide for analyzing shareholding concentration (HSC) and verifiable free float across Indonesia Stock Exchange (IDX) listed equities using PT Kustodian Sentral Efek Indonesia (KSEI) $>1\%$ ownership registers.
+
+The **`CobwebR`** framework addresses three core analytical components in emerging equity markets:
+
+* **The HSC Frontier:** Identifying stocks whose top-10 shareholding concentration meets or exceeds the regulatory threshold (e.g., $92.5\%$), capturing both officially designated HSC stocks and hidden concentrated equivalents.
+* **Spider Web Cross-Ownership:** Mapping indirect control webs and group-linked co-holdings among blockholders below $5\%$.
+* **The Green List Screener:** Filtering a rules-based universe of verifiable free float tradability with genuine institutional participation.
+
+# Data Ingestion and Cleaning
+
+We load the raw monthly KSEI $>1\%$ ownership dataset (e.g., October 2026 register) and standardize investor classifications, scripless vs. scrip holdings, and corporate identifiers.
+
+```{r load-data}
+# Path to bundled sample dataset
+sample_file <- system.file("extdata", "peng-2026-10-00029-satu-persen.xlsx", package = "CobwebR")
+
+# If running outside package build directory, load directly:
+if (sample_file == "") {
+  sample_file <- "../inst/extdata/peng-2026-10-00029-satu-persen.xlsx"
+}
+
+ksei_clean <- load_ksei_register(sample_file)
+
+# Inspect dimensions and top rows
+dim(ksei_clean)
+head(ksei_clean %>% select(ticker, issuer_name, investor_name, percentage), 5)
+
+```
+
+# Calculating the HSC Frontier
+
+The High Shareholding Concentration (HSC) frontier calculates the aggregate stake held by the top 10 shareholders owning $>1\%$ of each issuer. Stocks with a top-10 stake $\ge 92.5\%$ are classified as **Inside** the HSC frontier.
+
+```{r hsc-frontier}
+# Compute HSC frontier summary
+frontier_results <- calculate_hsc_frontier(ksei_clean, threshold = 0.925)
+
+# Summary counts
+frontier_summary_table <- frontier_results %>%
+  count(frontier_status)
+
+print(frontier_summary_table)
+
+# View top 10 most concentrated stocks
+frontier_results %>%
+  arrange(desc(stake_top_10)) %>%
+  select(ticker, issuer_name, stake_top_10, largest_holder) %>%
+  head(10)
+
+```
+
+# Mapping Spider Web Cross-Ownership
+
+To detect indirect control and cross-ownership webs, we analyze co-holder recurrences across multiple tickers. Holders appearing across multiple distinct companies are flagged for network consolidation.
+
+```{r spider-web}
+# Identify group-linked holders
+ksei_network_flagged <- identify_group_links(ksei_clean)
+
+# Count group-linked entities
+group_linked_summary <- ksei_network_flagged %>%
+  summarise(
+    total_records = n(),
+    group_linked_records = sum(is_group_linked, na.rm = TRUE),
+    share_linked = mean(is_group_linked, na.rm = TRUE) * 100
+  )
+
+print(group_linked_summary)
+
+```
+
+# Executing the Green List Screener
+
+The Green List isolates liquid, transparent equities with verified free float tradability across six sequential criteria ($\text{I}$, $\text{F}$, $\text{B}$, $\text{P}$, $\text{S}$, $\text{L}$):
+
+* **Integrity ($\text{I}$):** Excludes HSC-designated stocks and suspension cases.
+* **Free Float ($\text{F}$):** Free float $\ge 15\%$, total owner concentration $\le 85\%$.
+* **Broker Concentration ($\text{B}$):** Top broker share $< 30\%$.
+* **Institutional Participation ($\text{P}$):** Verified institutional holding rules.
+* **Size ($\text{S}$):** Free float market capitalization $\ge \text{IDR } 1\text{tn}$.
+* **Liquidity ($\text{L}$):** ADTV complementary screening.
+
+```{r green-list}
+# Simulated market data join for screening demonstration
+market_dummy <- frontier_results %>%
+  mutate(
+    criterion_integrity = (frontier_status == "Outside"),
+    criterion_free_float = 1 - stake_top_10,
+    criterion_owner_conc = stake_top_10,
+    criterion_broker_top = 0.20,
+    criterion_institutional = TRUE,
+    criterion_size_ffmc = 2.5, # IDR trillion
+    free_float_mcap = stake_top_10 * 1000
+  )
+
+green_list_stocks <- run_green_list_screener(ksei_clean, market_dummy)
+
+# Number of passing stocks
+nrow(green_list_stocks)
+
+```
+
+# Visualizing Results
+
+We generate publication-ready plots illustrating the concentration distribution across the HSC frontier.
+
+```{r plot-frontier, fig.cap="Top-10 Stakeholder Concentration Across IDX Equities"}
+plot_hsc_frontier(frontier_results %>% head(25))
+
+```
+
+# References
+
+* Mansur, A., et al. (2026). *SpiderWeb: A Reproducible Ownership-Network Framework for Measuring Shareholding Concentration and Verifiable Free Float in Equity Markets*. DEN Working Paper No. 1.
+* PT Kustodian Sentral Efek Indonesia (KSEI). (2026). *Monthly Shareholding Registration Data ($>1\%$)*.
+
+```
+
+*(Note: When saving this locally, ensure you save it as a `.Rmd` file so `devtools::build_vignettes()` compiles it properly.)*
+
+```
