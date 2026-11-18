@@ -1,0 +1,7 @@
+sw_ticker,holder_a,holder_b,decision,reason
+SW532,,,exclude_stock,"Rule (i) links nine holders (each 4.85-4.95%) that co-hold four or more other stocks; the paper's baseline keeps this stock at reported ownership. Reason pending author confirmation."
+SW586,,,exclude_stock,"Rule (i) links eleven holders that co-hold other stocks; the paper's baseline keeps this stock at reported ownership. Reason pending author confirmation."
+SW870,,,exclude_stock,"Rule (i) links nine corporate holders that co-hold up to five other stocks; the paper's baseline keeps this stock at reported ownership. Reason pending author confirmation."
+SW642,,,exclude_stock,"Rule (i) links individuals of one family through the corporate controller, which co-holds a second stock; the paper does not apply family links. Reason pending author confirmation."
+SW841,,,exclude_stock,"Rule (i) links two declared co-controllers and one offshore holder that co-hold a second stock; the paper's baseline keeps this stock at reported ownership. Reason pending author confirmation."
+SW963,,,exclude_stock,"Rule (ii) links a corporate holder carrying the controller's group name to the controller (possibly treasury shares); the paper's baseline keeps this stock at reported ownership. Reason pending author confirmation."

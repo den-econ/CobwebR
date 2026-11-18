@@ -2,18 +2,32 @@
 % Please edit documentation in R/hsc_frontier.R
 \name{calculate_hsc_frontier}
 \alias{calculate_hsc_frontier}
-\title{Calculate High Shareholding Concentration (HSC) Frontier}
+\title{HSC frontier and HSC-equivalent classification}
 \usage{
-calculate_hsc_frontier(ksei_df, threshold = 0.925)
+calculate_hsc_frontier(x, hsc_list, links = NULL, digits = 2)
 }
 \arguments{
-\item{ksei_df}{Cleaned KSEI dataframe.}
+\item{x}{A KSEI register from [load_ksei_register()], or a stock-level data
+frame with columns `ticker`, `C` and `H` (e.g. from a monthly panel).}
 
-\item{threshold}{Top-10 stake threshold (default 0.925).}
+\item{hsc_list}{Designated HSC stocks: a character vector of tickers or a
+data frame with a `sw_ticker` or `ticker` column.}
+
+\item{links}{Optional `"spider_web"` object from [identify_group_links()].}
+
+\item{digits}{Rounding of `C` before comparison (the paper uses 2 decimals).}
 }
 \value{
-Summary dataframe of stock concentration and frontier status.
+An object of class `"hsc_frontier"`: a list with `stocks` (one row
+  per stock), `anchors` and `hsc` (the designated stocks' C and H).
 }
 \description{
-Calculate High Shareholding Concentration (HSC) Frontier
+Computes the combined stake \eqn{C_i} and holder count \eqn{H_i} of each
+stock, the frontier anchors (eq. sw-frontier) and the HSC-equivalent zone
+(eq. sw-zone):
+\deqn{\mathcal{Z}_{HSC} = \{(C, H) : \exists j \in \mathcal{D},\ C \ge C_j,\ H \le H_j\}}
+With `links`, each stock is also tested at its consolidated holder count
+\eqn{\tilde{H}_i}, and stocks are classified as `HSC` (designated),
+`Equivalent` (in the zone as reported), `Added` (in the zone only after the
+spider web assessment) or `Outside`.
 }

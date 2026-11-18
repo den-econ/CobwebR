@@ -2,16 +2,26 @@
 % Please edit documentation in R/visualize.R
 \name{plot_hsc_frontier}
 \alias{plot_hsc_frontier}
-\title{Plot HSC Frontier}
+\title{Plot the HSC frontier and the HSC-equivalent zone}
 \usage{
-plot_hsc_frontier(frontier_df)
+plot_hsc_frontier(x, xlim = c(80, 100), h_max = 30, labels = NULL)
 }
 \arguments{
-\item{frontier_df}{Output from calculate_hsc_frontier().}
+\item{x}{An `"hsc_frontier"` object.}
+
+\item{xlim}{Range of combined stakes shown, in percent.}
+
+\item{h_max}{Holder counts above this are drawn at `h_max`.}
+
+\item{labels}{Optional named character vector: names are tickers, values are
+labels drawn next to those stocks.}
 }
 \value{
-ggplot2 object.
+A `ggplot` object.
 }
 \description{
-Plot HSC Frontier
+Draws every stock in the concentration space (combined stake against holder
+count), coloured by group, with the frontier staircase and the shaded zone,
+as in the paper's frontier figure. Stocks added by the spider web assessment
+are drawn at their reported holder count.
 }

@@ -52,5 +52,14 @@ paper's numbers from these files only. Currently 20 of 20 checks match:
 - Green List sequence 881→370→166→122→65→55; 3,415 tn and 1,204 tn; top-10 float caps; 60 at IDR 0.5 tn
 - market totals 10,491 tn and 1,945 tn
 
-The 9 stocks added by the spider web assessment (476 tn; 423 in total) need the
-linked-holder table, which is not yet included.
+The spider web module is reproduced by the package itself (`identify_group_links()`,
+`calculate_hsc_frontier()`, see `tests/testthat/test-spiderweb.R` and the
+spider web replication guide): 83 / 331 / 9 / 423 stocks, 3,049 / 1,296 / 476 tn,
+Stock G 14 → 2 holders and 11.34% free float.
+
+## Spider web review and case files
+
+| File | Content |
+|:--|:--|
+| `link_review.csv` | Supervisory review decisions that override the mechanical linked-holder rules. Six stocks that the rules add are kept at reported ownership, as in the paper's baseline; reasons pending author confirmation |
+| `case_stock_d_2026-09-30.csv` | Stock D holders on 30 Sep 2026 with the paper's anonymised labels and linked groups (the September holder-level register is not bundled) |

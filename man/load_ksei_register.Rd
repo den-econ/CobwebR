@@ -7,7 +7,7 @@
 load_ksei_register(file_path)
 }
 \arguments{
-\item{file_path}{Path to the KSEI Excel file.}
+\item{file_path}{Path to the KSEI file: the raw IDX Excel download, or a CSV with the same columns (e.g. the bundled `ksei_ownership_2026-10-30.csv`).}
 }
 \value{
 A cleaned tibble of shareholdings.

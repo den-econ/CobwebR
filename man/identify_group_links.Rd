@@ -2,16 +2,59 @@
 % Please edit documentation in R/spider_web.R
 \name{identify_group_links}
 \alias{identify_group_links}
-\title{Identify Group-Linked Holders and Cross-Ownership Webs}
+\title{Identify linked holders: the market-wide shareholder linkage graph}
 \usage{
-identify_group_links(ksei_df)
+identify_group_links(
+  ksei_df,
+  rules = c("i", "ii", "iii", "iv"),
+  min_shared_stocks = 2L,
+  min_offshore_vehicles = 3L,
+  link_individual_pairs = FALSE,
+  review = NULL
+)
 }
 \arguments{
-\item{ksei_df}{Cleaned KSEI dataframe.}
+\item{ksei_df}{Register from [load_ksei_register()].}
+
+\item{rules}{Rules to apply, any of `"i"`, `"ii"`, `"iii"`, `"iv"`.}
+
+\item{min_shared_stocks}{Minimum number of shared stocks for rule (i).}
+
+\item{min_offshore_vehicles}{Minimum offshore vehicles of one group in a
+stock for rule (iii).}
+
+\item{link_individual_pairs}{Link pairs of two individuals under rule (i)?}
+
+\item{review}{Optional supervisory review table, see [read_link_review()].}
 }
 \value{
-Dataframe with group-linked flags and consolidated stakes.
+An object of class `"spider_web"`: a list with `edges` (one row per
+  link with the rule and the evidence), `holders` (the classified register
+  with the group of every holding), `groups` (group sizes), `graph` (an
+  `igraph` object), `review` and `params`.
 }
 \description{
-Identify Group-Linked Holders and Cross-Ownership Webs
+Builds the linkage graph \eqn{G = (V, E)} of Section 3.3 and partitions it
+into connected components, each treated as one economic holder. Two holders
+are linked when at least one rule holds:
+}
+\details{
+* **(i) co-occurrence**: they appear together as holders above 1 percent in
+  at least `min_shared_stocks` stocks. Pairs of two individuals are not
+  linked, because family links are not yet applied.
+* **(ii) group name**: a corporate holder's name starts with the same
+  distinctive word as the name of the stock's declared corporate controller
+  (the group brand, e.g. MNC or CAPITAL), after legal forms and common words
+  are removed.
+* **(iii) offshore vehicles**: a single-stock offshore vehicle sits in a
+  stock where one linked group already holds at least
+  `min_offshore_vehicles` offshore vehicles; it joins that group.
+* **(iv) captive fund**: a fund whose name contains the group brand of the
+  stock's corporate controller.
+
+Broker and custodian nominee accounts and public sector holders are never
+linked. Eligible institutions are linked only through rule (iv).
+
+Rule (i) is applied first. Rule (iii) uses the groups formed by rule (i).
+Rules (ii) and (iv) attach holders to the controller within one stock.
 }

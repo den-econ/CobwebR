@@ -22,7 +22,8 @@ Imports:
     purrr,
     stringr,
     stats,
-    utils
+    utils,
+    grid
 Suggests:
     testthat,
     knitr,
